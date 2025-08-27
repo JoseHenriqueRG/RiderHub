@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  webapi:
+    build:
+      context: ./src
+      dockerfile: RiderHub.WebApi/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=riderhub;Username=postgres;Password=riderhubadmin
+      - RabbitMQ__HostName=rabbitmq
+    depends_on:
+      - db
+      - rabbitmq
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=riderhub
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=riderhubadmin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  pgdata:
+  rabbitmq_data:

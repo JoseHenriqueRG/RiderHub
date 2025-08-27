@@ -1,0 +1,9 @@
+namespace RiderHub.Domain.Entities
+{
+    public class Notification
+    {
+        public int Id { get; set; }
+        public required string Message { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+}
