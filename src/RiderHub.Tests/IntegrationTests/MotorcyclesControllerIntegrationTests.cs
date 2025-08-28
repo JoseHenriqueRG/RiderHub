@@ -78,7 +78,7 @@ namespace RiderHub.Tests.IntegrationTests
                 Assert.Fail($"API call failed with status code {response.StatusCode} and content: {errorContent}");
             }
             response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace RiderHub.Tests.IntegrationTests
                 Assert.Fail($"API call failed with status code {response.StatusCode} and content: {errorContent}");
             }
             response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

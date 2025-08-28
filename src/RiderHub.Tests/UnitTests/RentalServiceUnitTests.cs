@@ -3,6 +3,7 @@ using RiderHub.Application.Dtos;
 using RiderHub.Application.Services;
 using RiderHub.Domain.Entities;
 using RiderHub.Domain.Enums;
+using RiderHub.Domain.Exceptions;
 using RiderHub.Domain.Interfaces;
 
 namespace RiderHub.Tests.UnitTests
@@ -81,7 +82,7 @@ namespace RiderHub.Tests.UnitTests
             _mockDeliveryDriverRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((DeliveryDriver)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CreateRentalAsync(dto));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _rentalService.CreateRentalAsync(dto));
         }
 
         [Fact]
@@ -106,7 +107,7 @@ namespace RiderHub.Tests.UnitTests
             _mockMotorcycleRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((Motorcycle)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CreateRentalAsync(dto));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _rentalService.CreateRentalAsync(dto));
         }
 
         [Fact]
@@ -130,7 +131,7 @@ namespace RiderHub.Tests.UnitTests
             _mockDeliveryDriverRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(deliveryDriver);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CreateRentalAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _rentalService.CreateRentalAsync(dto));
         }
 
         [Fact]
@@ -164,7 +165,7 @@ namespace RiderHub.Tests.UnitTests
             _mockRentalPlanRepository.Setup(repo => repo.GetByDaysAsync(99)).ReturnsAsync((RentalPlan)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CreateRentalAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _rentalService.CreateRentalAsync(dto));
         }
 
         [Fact]
@@ -200,7 +201,7 @@ namespace RiderHub.Tests.UnitTests
             _mockRentalRepository.Setup(repo => repo.IsMotorcycleAvailableAsync(1, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(false);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CreateRentalAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _rentalService.CreateRentalAsync(dto));
         }
 
         [Fact]
@@ -334,7 +335,7 @@ namespace RiderHub.Tests.UnitTests
             _mockRentalRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((Rental)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CalculateRentalCostAsync(dto));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _rentalService.CalculateRentalCostAsync(dto));
             _mockRentalRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Rental>()), Times.Never);
         }
 
@@ -359,7 +360,7 @@ namespace RiderHub.Tests.UnitTests
             _mockRentalRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(rental);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _rentalService.CalculateRentalCostAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _rentalService.CalculateRentalCostAsync(dto));
             _mockRentalRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Rental>()), Times.Never);
         }
     }

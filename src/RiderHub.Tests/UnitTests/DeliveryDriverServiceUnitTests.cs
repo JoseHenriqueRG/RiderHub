@@ -5,6 +5,7 @@ using RiderHub.Application.Dtos;
 using RiderHub.Application.Services;
 using RiderHub.Domain.Entities;
 using RiderHub.Domain.Enums;
+using RiderHub.Domain.Exceptions;
 using RiderHub.Domain.Interfaces;
 using System.Text;
 
@@ -83,7 +84,7 @@ namespace RiderHub.Tests.UnitTests
             };
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
         }
 
         [Fact]
@@ -116,7 +117,7 @@ namespace RiderHub.Tests.UnitTests
             });
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
+            await Assert.ThrowsAsync<DuplicateCnpjException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
         }
 
         [Fact]
@@ -150,7 +151,7 @@ namespace RiderHub.Tests.UnitTests
             });
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
+            await Assert.ThrowsAsync<DuplicateCnhException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
         }
 
         [Fact]
@@ -172,7 +173,7 @@ namespace RiderHub.Tests.UnitTests
             _mockDeliveryDriverRepository.Setup(repo => repo.GetByDriverLicenseNumberAsync(It.IsAny<string>())).ReturnsAsync((DeliveryDriver)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _deliveryDriverService.RegisterDeliveryDriverAsync(dto));
         }
 
         [Fact]
@@ -221,7 +222,7 @@ namespace RiderHub.Tests.UnitTests
             _mockDeliveryDriverRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((DeliveryDriver)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.UpdateCnhImageAsync(dto));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _deliveryDriverService.UpdateCnhImageAsync(dto));
             _mockDeliveryDriverRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
             _mockDeliveryDriverRepository.Verify(repo => repo.UpdateAsync(It.IsAny<DeliveryDriver>()), Times.Never);
         }
@@ -251,7 +252,7 @@ namespace RiderHub.Tests.UnitTests
             _mockDeliveryDriverRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(deliveryDriver);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _deliveryDriverService.UpdateCnhImageAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _deliveryDriverService.UpdateCnhImageAsync(dto));
             _mockDeliveryDriverRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
             _mockDeliveryDriverRepository.Verify(repo => repo.UpdateAsync(It.IsAny<DeliveryDriver>()), Times.Never);
         }

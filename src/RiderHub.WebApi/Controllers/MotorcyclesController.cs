@@ -7,7 +7,7 @@ using RiderHub.Domain.Exceptions;
 
 namespace RiderHub.WebApi.Controllers
 {
-    [Route("api/motos")]
+    [Route("api/[controller]")]
     [ApiController]
     public class MotorcyclesController : ControllerBase
     {

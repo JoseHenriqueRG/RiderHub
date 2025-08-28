@@ -3,6 +3,7 @@ using RiderHub.Application.Dtos;
 using RiderHub.Application.Interfaces;
 using RiderHub.Application.Services;
 using RiderHub.Domain.Entities;
+using RiderHub.Domain.Exceptions;
 using RiderHub.Domain.Interfaces;
 using Xunit;
 
@@ -45,10 +46,10 @@ namespace RiderHub.Tests.UnitTests
             // Arrange
             var dto = new CreateMotorcycleDto { Year = 2023, Model = "Model X", LicensePlate = "ABC1234" };
             _mockMotorcycleRepository.Setup(repo => repo.AddAsync(It.IsAny<Motorcycle>()))
-                .ThrowsAsync(new InvalidOperationException("A motorcycle with this license plate already exists."));
+                .ThrowsAsync(new BusinessRuleException("A motorcycle with this license plate already exists."));
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _motorcycleService.CreateMotorcycleAsync(dto));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _motorcycleService.CreateMotorcycleAsync(dto));
             _mockMotorcycleRepository.Verify(repo => repo.AddAsync(It.IsAny<Motorcycle>()), Times.Once);
             _mockMessagePublisher.Verify(pub => pub.Publish(It.IsAny<string>()), Times.Never);
         }
@@ -111,7 +112,7 @@ namespace RiderHub.Tests.UnitTests
             _mockMotorcycleRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((Motorcycle)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _motorcycleService.UpdateMotorcycleLicensePlateAsync(dto));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _motorcycleService.UpdateMotorcycleLicensePlateAsync(dto));
             _mockMotorcycleRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
             _mockMotorcycleRepository.Verify(repo => repo.UpdateAsync(It.IsAny<Motorcycle>()), Times.Never);
         }
@@ -141,7 +142,7 @@ namespace RiderHub.Tests.UnitTests
             _mockMotorcycleRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync((Motorcycle)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _motorcycleService.DeleteMotorcycleAsync(1));
+            await Assert.ThrowsAsync<EntityNotFoundException>(() => _motorcycleService.DeleteMotorcycleAsync(1));
             _mockMotorcycleRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
             _mockMotorcycleRepository.Verify(repo => repo.HasRentalsAsync(It.IsAny<int>()), Times.Never);
             _mockMotorcycleRepository.Verify(repo => repo.DeleteAsync(It.IsAny<Motorcycle>()), Times.Never);
@@ -156,7 +157,7 @@ namespace RiderHub.Tests.UnitTests
             _mockMotorcycleRepository.Setup(repo => repo.HasRentalsAsync(1)).ReturnsAsync(true);
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _motorcycleService.DeleteMotorcycleAsync(1));
+            await Assert.ThrowsAsync<BusinessRuleException>(() => _motorcycleService.DeleteMotorcycleAsync(1));
             _mockMotorcycleRepository.Verify(repo => repo.GetByIdAsync(1), Times.Once);
             _mockMotorcycleRepository.Verify(repo => repo.HasRentalsAsync(1), Times.Once);
             _mockMotorcycleRepository.Verify(repo => repo.DeleteAsync(It.IsAny<Motorcycle>()), Times.Never);

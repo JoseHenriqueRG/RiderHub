@@ -44,7 +44,10 @@ namespace RiderHub.WebApi
                 try
                 {
                     var context = services.GetRequiredService<RiderHubContext>();
-                    context.Database.Migrate();
+                    if (context.Database.IsRelational())
+                    {
+                        context.Database.Migrate();
+                    }
                 }
                 catch (Exception ex)
                 {

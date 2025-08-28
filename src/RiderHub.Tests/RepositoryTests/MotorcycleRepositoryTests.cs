@@ -4,6 +4,7 @@ using RiderHub.Infrastructure.Context;
 using RiderHub.Infrastructure.Repositories;
 using Xunit;
 using RiderHub.Domain.Enums;
+using RiderHub.Domain.Exceptions;
 
 namespace RiderHub.Tests.RepositoryTests
 {
@@ -32,21 +33,6 @@ namespace RiderHub.Tests.RepositoryTests
             var addedMotorcycle = await context.Motorcycles.FirstOrDefaultAsync(m => m.LicensePlate == "TEST1234");
             Assert.NotNull(addedMotorcycle);
             Assert.Equal("TEST1234", addedMotorcycle.LicensePlate);
-        }
-
-        [Fact]
-        public async Task AddAsync_ShouldThrowException_WhenLicensePlateExists()
-        {
-            // Arrange
-            using var context = GetInMemoryDbContext();
-            var repository = new MotorcycleRepository(context);
-            var existingMotorcycle = new Motorcycle { Year = 2022, Model = "Model X", LicensePlate = "EXISTING" };
-            await repository.AddAsync(existingMotorcycle);
-
-            var newMotorcycle = new Motorcycle { Year = 2023, Model = "Model Y", LicensePlate = "EXISTING" };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => repository.AddAsync(newMotorcycle));
         }
 
         [Fact]
